@@ -13,7 +13,7 @@ public class MouseBot {
         CursorManager cursorManager = new CursorManager(robot);
 
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame();
+            JFrame frame = new JFrame("MouseBot");
             frame.setLayout(new BorderLayout());
             frame.add(new MouseBotPanel(cursorManager), BorderLayout.CENTER);
 

@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
+import javax.swing.AbstractButton;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -14,11 +14,11 @@ import javax.swing.border.Border;
 
 class MouseBotPanel extends JPanel implements ActionListener {
     static int MOVEMENT_DEFAULT = 5;
-    static int MOVEMENT_MIN = 0;
+    static int MOVEMENT_MIN = 1;
     static int MOVEMENT_MAX = 20;
     static int MOVEMENT_STEP = 1;
     static int INTERVAL_DEFAULT = 5;
-    static int INTERVAL_MIN = 0;
+    static int INTERVAL_MIN = 1;
     static int INTERVAL_MAX = 60;
     static int INTERVAL_STEP = 1;
 
@@ -41,8 +41,11 @@ class MouseBotPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        JCheckBox checkbox = (JCheckBox)(ev.getSource());
-        boolean isEnabled = checkbox.isSelected();
+        AbstractButton switchButton = (AbstractButton)(ev.getSource());
+        boolean isEnabled = switchButton.isSelected();
+
+        this.intervalSpinner.setEnabled(!isEnabled);
+        this.movementSpinner.setEnabled(!isEnabled);
 
         if (isEnabled) {
             this.cursorManager.setMovement(
@@ -80,7 +83,9 @@ class MouseBotPanel extends JPanel implements ActionListener {
         this.add(intervalPanel);
 
         Switch switchButton = new Switch();
-        this.add(switchButton);
+        JPanel switchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        switchPanel.add(switchButton);
+        this.add(switchPanel);
 
         switchButton.addActionListenerToSwitch(this);
     }
