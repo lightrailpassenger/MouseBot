@@ -1,18 +1,16 @@
 package io.github.lightrailpassenger.mousebot;
 
+import java.awt.Robot;
 import java.util.Timer;
 import java.util.TimerTask;
 
 class CursorManager {
-    private MovementTimerTask movementTask;
+    private static final int MILLISECONDS_PER_SECOND = 1000;
+    private final Robot robot;
     private Timer timer;
 
-    CursorManager(MovementTimerTask movementTask) {
-        this.movementTask = movementTask;
-    }
-
-    static abstract class MovementTimerTask extends TimerTask {
-        public abstract void setMovement(int movement);
+    CursorManager(Robot robot) {
+        this.robot = robot;
     }
 
     static class CursorMovementOptions {
@@ -35,16 +33,16 @@ class CursorManager {
 
     void setMovement(CursorMovementOptions options) {
         if (
-            (options == null) != (this.timer != null)
+            (options != null) != (this.timer != null)
         ) {
             if (options == null) {
                 this.timer.cancel();
                 this.timer = null;
             } else {
-                this.timer = new Timer();
-                this.movementTask.setMovement(options.getMovement());
+                TimerTask movementTask = new DefaultMovementTimerTask(this.robot, options.getMovement());
 
-                this.timer.scheduleAtFixedRate(this.movementTask, options.getInterval(), options.getInterval());
+                this.timer = new Timer();
+                this.timer.scheduleAtFixedRate(movementTask, options.getInterval() * MILLISECONDS_PER_SECOND, options.getInterval() * MILLISECONDS_PER_SECOND);
             }
         }
     }

@@ -2,14 +2,17 @@ package io.github.lightrailpassenger.mousebot;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 
-class MouseBotPanel extends JPanel {
+class MouseBotPanel extends JPanel implements ActionListener {
     static int MOVEMENT_DEFAULT = 5;
     static int MOVEMENT_MIN = 0;
     static int MOVEMENT_MAX = 20;
@@ -19,9 +22,13 @@ class MouseBotPanel extends JPanel {
     static int INTERVAL_MAX = 60;
     static int INTERVAL_STEP = 1;
 
-    MouseBotPanel() {
+    private JSpinner movementSpinner, intervalSpinner;
+    private CursorManager cursorManager;
+
+    MouseBotPanel(CursorManager cursorManager) {
         super();
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        this.cursorManager = cursorManager;
         this.initialize();
     }
 
@@ -30,6 +37,23 @@ class MouseBotPanel extends JPanel {
         Border titledBorder = BorderFactory.createTitledBorder(lineBorder, title);
 
         return titledBorder;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+        JCheckBox checkbox = (JCheckBox)(ev.getSource());
+        boolean isEnabled = checkbox.isSelected();
+
+        if (isEnabled) {
+            this.cursorManager.setMovement(
+                new CursorManager.CursorMovementOptions(
+                    (int)(this.intervalSpinner.getValue()),
+                    (int)(this.movementSpinner.getValue())
+                )
+            );
+        } else {
+            this.cursorManager.setMovement(null);
+        }
     }
 
     private void initialize() {
@@ -49,8 +73,15 @@ class MouseBotPanel extends JPanel {
         movementPanel.add(movementSpinner);
         intervalPanel.add(intervalSpinner);
 
+        this.movementSpinner = movementSpinner;
+        this.intervalSpinner = intervalSpinner;
+
         this.add(movementPanel);
         this.add(intervalPanel);
-        this.add(new Switch());
+
+        Switch switchButton = new Switch();
+        this.add(switchButton);
+
+        switchButton.addActionListenerToSwitch(this);
     }
 }

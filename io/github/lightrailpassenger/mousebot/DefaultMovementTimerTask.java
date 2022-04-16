@@ -5,17 +5,14 @@ import java.awt.PointerInfo;
 import java.awt.Point;
 import java.awt.MouseInfo;
 import java.awt.Robot;
+import java.util.TimerTask;
 
-class DefaultMovementTimerTask extends CursorManager.MovementTimerTask {
-    private Robot robot;
-    private int movement;
+class DefaultMovementTimerTask extends TimerTask {
+    private final Robot robot;
+    private final int movement;
 
-    DefaultMovementTimerTask(Robot robot) {
+    DefaultMovementTimerTask(Robot robot, int movement) {
         this.robot = robot;
-    }
-
-    @Override
-    public void setMovement(int movement) {
         this.movement = movement;
     }
 
